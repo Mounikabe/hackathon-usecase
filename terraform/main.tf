@@ -10,6 +10,7 @@ terraform {
 provider "google" {
   project = "peppy-plateau-477609-c8"
   region  = "us-central1"
+  credentials = secrets.GCP_SA_KEY
 }
 
 resource "google_compute_network" "main_vpc" {
