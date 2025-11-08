@@ -24,21 +24,21 @@ jobs:
       - name: Set up GCP credentials
         run: |
           echo "${{ secrets.GCP_SA_KEY }}" > ${{ runner.temp }}/gcp-key.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ runner.temp }}/gcp-key.json" >> $GITHUB_ENV
-
+        env:
+          TF_VAR_gcp_sa_key_json: ${{ secrets.GCP_SA_KEY }}  # Terraform variable
 
       - name: Terraform Init
         run: terraform -chdir=${{ env.TF_WORKING_DIR }} init
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-key.json
+          TF_VAR_gcp_sa_key_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Terraform Plan
         run: terraform -chdir=${{ env.TF_WORKING_DIR }} plan -no-color
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-key.json
+          TF_VAR_gcp_sa_key_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform -chdir=${{ env.TF_WORKING_DIR }} apply -auto-approve
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-key.json
+          TF_VAR_gcp_sa_key_json: ${{ secrets.GCP_SA_KEY }}
