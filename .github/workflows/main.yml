@@ -10,7 +10,7 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     env:
-      TF_WORKING_DIR: ./
+      TF_WORKING_DIR: ./terraform
 
     steps:
       - name: Checkout code
