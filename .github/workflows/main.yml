@@ -21,10 +21,11 @@ jobs:
         with:
           terraform_version: 1.9.5
 
-      - name: Configure GCP Credentials
+      - name: Set up GCP credentials
         run: |
-          echo "${{ secrets.GCP_SA_KEY }}" > $HOME/gcp-key.json
-        shell: bash
+          echo "${{ secrets.GCP_SA_KEY }}" > ${{ runner.temp }}/gcp-key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ runner.temp }}/gcp-key.json" >> $GITHUB_ENV
+
 
       - name: Terraform Init
         run: terraform -chdir=${{ env.TF_WORKING_DIR }} init
