@@ -1,0 +1,44 @@
+name: Terraform GCP Deploy
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    env:
+      TF_WORKING_DIR: ./
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+
+      - name: Configure GCP Credentials
+        run: |
+          echo "${{ secrets.GCP_SA_KEY }}" > $HOME/gcp-key.json
+        shell: bash
+
+      - name: Terraform Init
+        run: terraform -chdir=${{ env.TF_WORKING_DIR }} init
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ HOME }}/gcp-key.json
+
+      - name: Terraform Plan
+        run: terraform -chdir=${{ env.TF_WORKING_DIR }} plan -no-color
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ HOME }}/gcp-key.json
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform -chdir=${{ env.TF_WORKING_DIR }} apply -auto-approve
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ HOME }}/gcp-key.json
