@@ -1,0 +1,20 @@
+# k8s/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: your-microservice
+  template:
+    metadata:
+      labels:
+        app: your-microservice
+    spec:
+      containers:
+        - name: your-microservice
+          image: ${{ env.IMAGE }}
+          ports:
+            - containerPort: 3000 
