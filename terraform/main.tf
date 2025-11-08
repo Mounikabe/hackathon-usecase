@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "google" {
-  credentials = env("GCP_SA_KEY")  
+  credentials = file(var.gcp_sa_key_path)
   project     = "peppy-plateau-477609-c8"
   region      = "us-central1"
 }
